@@ -1,0 +1,876 @@
+﻿{
+	"openapi": "3.0.3",
+	"info": {
+		"title": "HideMail App API",
+		"description": "",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "https://hidemail.app"
+		}
+	],
+	"paths": {
+		"/api/v1/sanctum/token": {
+			"post": {
+				"summary": "Create a token.",
+				"operationId": "createAToken",
+				"description": "This endpoint lets you create a permanent token.",
+				"parameters": [],
+				"responses": {
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "The given data was invalid.",
+										"errors": {
+											"email": ["The provided credentials are incorrect."]
+										}
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "The given data was invalid."
+										},
+										"errors": {
+											"type": "object",
+											"properties": {
+												"email": {
+													"type": "array",
+													"example": ["The provided credentials are incorrect."],
+													"items": {
+														"type": "string"
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {
+										"type": "string",
+										"description": "Email.",
+										"example": "hi@example.com"
+									},
+									"password": {
+										"type": "string",
+										"description": "Password.",
+										"example": "password"
+									},
+									"device_name": {
+										"type": "string",
+										"description": "Device Name.",
+										"example": "Raycast"
+									}
+								},
+								"required": ["email", "password", "device_name"]
+							}
+						}
+					}
+				},
+				"security": []
+			}
+		},
+		"/api/user": {
+			"get": {
+				"summary": "",
+				"operationId": "getApiUser",
+				"description": "",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"]
+			}
+		},
+		"/api/v1/email/create": {
+			"post": {
+				"summary": "",
+				"operationId": "postApiV1EmailCreate",
+				"description": "",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"]
+			}
+		},
+		"/api/v1/domain-options": {
+			"get": {
+				"summary": "",
+				"operationId": "getApiV1DomainOptions",
+				"description": "",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"]
+			}
+		},
+		"/api/v1/aliases": {
+			"post": {
+				"summary": "Create a new email alias.",
+				"operationId": "createANewEmailAlias",
+				"description": "This endpoint lets you create a new alias.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": {
+											"email": "alias@hidemail.app",
+											"note": "My shopping account",
+											"is_active": true,
+											"created_at": "2024-01-28T15:03:09.000000Z",
+											"updated_at": "2024-01-28T15:03:09.000000Z",
+											"total_forwarded": 0,
+											"total_blocked": 0
+										}
+									},
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"email": {
+													"type": "string",
+													"example": "alias@hidemail.app"
+												},
+												"note": {
+													"type": "string",
+													"example": "My shopping account"
+												},
+												"is_active": {
+													"type": "boolean",
+													"example": true
+												},
+												"created_at": {
+													"type": "string",
+													"example": "2024-01-28T15:03:09.000000Z"
+												},
+												"updated_at": {
+													"type": "string",
+													"example": "2024-01-28T15:03:09.000000Z"
+												},
+												"total_forwarded": {
+													"type": "integer",
+													"example": 0
+												},
+												"total_blocked": {
+													"type": "integer",
+													"example": 0
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"description": {
+										"type": "string",
+										"description": "Note.",
+										"example": "My new alias"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"patch": {
+				"summary": "Update an email alias note.",
+				"operationId": "updateAnEmailAliasNote",
+				"description": "This endpoint allows you to update the note for a specific email alias.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": {
+											"email": "alias@hidemail.app",
+											"note": "My shopping account",
+											"is_active": true,
+											"created_at": "2024-01-28T15:03:09.000000Z",
+											"updated_at": "2024-01-28T15:03:09.000000Z",
+											"total_forwarded": 0,
+											"total_blocked": 0
+										}
+									},
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"email": {
+													"type": "string",
+													"example": "alias@hidemail.app"
+												},
+												"note": {
+													"type": "string",
+													"example": "My shopping account"
+												},
+												"is_active": {
+													"type": "boolean",
+													"example": true
+												},
+												"created_at": {
+													"type": "string",
+													"example": "2024-01-28T15:03:09.000000Z"
+												},
+												"updated_at": {
+													"type": "string",
+													"example": "2024-01-28T15:03:09.000000Z"
+												},
+												"total_forwarded": {
+													"type": "integer",
+													"example": 0
+												},
+												"total_blocked": {
+													"type": "integer",
+													"example": 0
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Email alias not found"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Email alias not found"
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "The note field is required.",
+										"errors": {
+											"note": ["The note field is required."]
+										}
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "The note field is required."
+										},
+										"errors": {
+											"type": "object",
+											"properties": {
+												"note": {
+													"type": "array",
+													"example": ["The note field is required."],
+													"items": {
+														"type": "string"
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"note": {
+										"type": "string",
+										"description": "The new note for the alias. Max 255 characters.",
+										"example": "\"My shopping account\""
+									},
+									"email": {
+										"type": "string",
+										"description": "The email alias to update.",
+										"example": "alias@hidemail.app"
+									}
+								},
+								"required": ["note", "email"]
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"summary": "Get all aliases.",
+				"operationId": "getAllAliases",
+				"description": "This endpoint lets you get all your aliases.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": [
+											{
+												"email": "test@relay.hidemail.app",
+												"is_active": true,
+												"note": null,
+												"total_forwarded": 0,
+												"total_blocked": 0,
+												"created_at": "2023-03-01 21:04:51",
+												"updated_at": "2023-03-01 21:12:11"
+											},
+											{
+												"email": "test@relay.hidemail.app",
+												"is_active": true,
+												"note": null,
+												"total_forwarded": 0,
+												"total_blocked": 0,
+												"created_at": "2023-03-01 21:04:51",
+												"updated_at": "2023-03-01 21:12:11"
+											}
+										]
+									},
+									"properties": {
+										"data": {
+											"type": "array",
+											"example": [
+												{
+													"email": "test@relay.hidemail.app",
+													"is_active": true,
+													"note": null,
+													"total_forwarded": 0,
+													"total_blocked": 0,
+													"created_at": "2023-03-01 21:04:51",
+													"updated_at": "2023-03-01 21:12:11"
+												},
+												{
+													"email": "test@relay.hidemail.app",
+													"is_active": true,
+													"note": null,
+													"total_forwarded": 0,
+													"total_blocked": 0,
+													"created_at": "2023-03-01 21:04:51",
+													"updated_at": "2023-03-01 21:12:11"
+												}
+											],
+											"items": {
+												"type": "object",
+												"properties": {
+													"email": {
+														"type": "string",
+														"example": "test@relay.hidemail.app"
+													},
+													"is_active": {
+														"type": "boolean",
+														"example": true
+													},
+													"note": {
+														"type": "string",
+														"example": null
+													},
+													"total_forwarded": {
+														"type": "integer",
+														"example": 0
+													},
+													"total_blocked": {
+														"type": "integer",
+														"example": 0
+													},
+													"created_at": {
+														"type": "string",
+														"example": "2023-03-01 21:04:51"
+													},
+													"updated_at": {
+														"type": "string",
+														"example": "2023-03-01 21:12:11"
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"page": {
+										"type": "object",
+										"description": "",
+										"example": null,
+										"properties": {
+											"number": {
+												"type": "integer",
+												"description": "Must be at least 1.",
+												"example": 38
+											},
+											"size": {
+												"type": "integer",
+												"description": "Must not be greater than 100. Must be at least 1.",
+												"example": 86
+											}
+										}
+									},
+									"filter": {
+										"type": "object",
+										"description": "",
+										"example": null,
+										"properties": {
+											"is_active": {
+												"type": "integer",
+												"description": "Must not be greater than 1. Must be at least 0.",
+												"example": 90
+											}
+										}
+									},
+									"search": {
+										"type": "string",
+										"description": "Must not be greater than 25 characters. Must be at least 3 characters.",
+										"example": "jmyuxpcpjtgwmqrequxgpvromuixcdqdmztilwaydcofwpnqilfoxolqrficpyyubxypqxfbritvkvcosucqbahey"
+									},
+									"sort": {
+										"type": "string",
+										"description": "Must not be greater than 50 characters. Must be at least 3 characters.",
+										"example": "vziwsmzsjwdpeasjozxsgcbmhpczdatxkjvduvfpijnuyinxdbucjwqgxlpzki",
+										"enum": [
+											"email",
+											"is_active",
+											"created_at",
+											"updated_at",
+											"total_blocked",
+											"total_forwarded",
+											"-total_blocked",
+											"-total_forwarded",
+											"-email",
+											"-is_active",
+											"-created_at",
+											"-updated_at"
+										]
+									},
+									"page[size]": {
+										"type": "integer",
+										"description": "",
+										"example": 100
+									},
+									"page[number]": {
+										"type": "integer",
+										"description": "",
+										"example": 1
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/active-aliases": {
+			"post": {
+				"summary": "Activate an alias.",
+				"operationId": "activateAnAlias",
+				"description": "This endpoint lets you update the status of an alias to active.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": {
+											"email": "test@relay.hidemail.app",
+											"is_active": true,
+											"note": null,
+											"total_forwarded": 0,
+											"total_blocked": 0,
+											"created_at": "2023-03-01 21:04:51",
+											"updated_at": "2023-03-01 21:12:11"
+										}
+									},
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"email": {
+													"type": "string",
+													"example": "test@relay.hidemail.app"
+												},
+												"is_active": {
+													"type": "boolean",
+													"example": true
+												},
+												"note": {
+													"type": "string",
+													"example": null
+												},
+												"total_forwarded": {
+													"type": "integer",
+													"example": 0
+												},
+												"total_blocked": {
+													"type": "integer",
+													"example": 0
+												},
+												"created_at": {
+													"type": "string",
+													"example": "2023-03-01 21:04:51"
+												},
+												"updated_at": {
+													"type": "string",
+													"example": "2023-03-01 21:12:11"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {
+										"type": "string",
+										"description": "The email you want to activate",
+										"example": "dborer@example.net"
+									}
+								},
+								"required": ["email"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/delete-aliases": {
+			"delete": {
+				"summary": "Deactivate an alias.",
+				"operationId": "deactivateAnAlias",
+				"description": "This endpoint lets you update the status of an alias to in active.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": {
+											"email": "test@relay.hidemail.app",
+											"is_active": true,
+											"note": null,
+											"total_forwarded": 0,
+											"total_blocked": 0,
+											"created_at": "2023-03-01 21:04:51",
+											"updated_at": "2023-03-01 21:12:11"
+										}
+									},
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"email": {
+													"type": "string",
+													"example": "test@relay.hidemail.app"
+												},
+												"is_active": {
+													"type": "boolean",
+													"example": true
+												},
+												"note": {
+													"type": "string",
+													"example": null
+												},
+												"total_forwarded": {
+													"type": "integer",
+													"example": 0
+												},
+												"total_blocked": {
+													"type": "integer",
+													"example": 0
+												},
+												"created_at": {
+													"type": "string",
+													"example": "2023-03-01 21:04:51"
+												},
+												"updated_at": {
+													"type": "string",
+													"example": "2023-03-01 21:12:11"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {
+										"type": "string",
+										"description": "The email you want to deactivate",
+										"example": "gerard.robel@example.com"
+									}
+								},
+								"required": ["email"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/subscribe": {
+			"post": {
+				"summary": "Set a webhook URL.",
+				"operationId": "setAWebhookURL",
+				"description": "This endpoint lets you create a webhook URL. After you get email on any of your aliases we will send all data to this URL. You can do automation with this data and create your own integrations.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"hookUrl": {
+										"type": "string",
+										"description": "Must not be greater than 255 characters.",
+										"example": "http://schuppe.com/labore-ut-asperiores-maxime-dicta"
+									}
+								},
+								"required": ["hookUrl"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/unsubscribe": {
+			"delete": {
+				"summary": "Remove a webhook URL.",
+				"operationId": "removeAWebhookURL",
+				"description": "This endpoint lets you remove a webhook URL.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"]
+			}
+		},
+		"/api/v1/delete-token": {
+			"delete": {
+				"summary": "Delete api token",
+				"operationId": "deleteApiToken",
+				"description": "This endpoint lets you remove a webhook URL.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": ["Endpoints"]
+			}
+		}
+	},
+	"tags": [
+		{
+			"name": "Endpoints",
+			"description": ""
+		}
+	],
+	"components": {
+		"securitySchemes": {
+			"default": {
+				"type": "http",
+				"scheme": "bearer",
+				"description": "You can retrieve your token by visiting your dashboard, find in menu <b>API tokens</b> and create a new one."
+			}
+		}
+	},
+	"security": [
+		{
+			"default": []
+		}
+	]
+}
