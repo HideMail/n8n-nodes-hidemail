@@ -22,7 +22,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/flatroy/n8n-nodes-hidemail.git"
+		"url": "https://github.com/hidemail/n8n-nodes-hidemail.git"
 	},
 	"engines": {
 		"node": ">=18.10"
