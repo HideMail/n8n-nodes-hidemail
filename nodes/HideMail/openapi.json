@@ -10,37 +10,199 @@
 			"url": "https://hidemail.app"
 		}
 	],
+	"tags": [
+		{
+			"name": "Endpoints",
+			"description": ""
+		}
+	],
+	"components": {
+		"securitySchemes": {
+			"default": {
+				"type": "http",
+				"scheme": "bearer",
+				"description": "You can retrieve your token by visiting your dashboard, find in menu <b>API tokens</b> and create a new one."
+			}
+		}
+	},
+	"security": [
+		{
+			"default": []
+		}
+	],
 	"paths": {
 		"/api/v1/sanctum/token": {
 			"post": {
 				"summary": "Create a token.",
 				"operationId": "createAToken",
-				"description": "This endpoint lets you create a permanent token.",
+				"description": "This endpoint lets you create a permanent token. When the account has\ntwo-factor authentication enabled and the client sends\n`two_factor_supported: true`, it returns `409` with a challenge to\nexchange at `POST /api/v1/sanctum/token/two-factor`.",
 				"parameters": [],
 				"responses": {
-					"422": {
+					"200": {
 						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"description": "Two-factor authentication off",
+											"type": "object",
+											"example": {
+												"token": "1a2b3c..."
+											},
+											"properties": {
+												"token": {
+													"type": "string",
+													"example": "1a2b3c..."
+												}
+											}
+										},
+										{
+											"description": "Legacy client during the grace window",
+											"type": "object",
+											"example": {
+												"token": "1a2b3c...",
+												"warnings": [
+													{
+														"code": "two_factor_client_upgrade_required",
+														"message": "This app cannot ask for your two-factor authentication code. Update it before Oct 12, 2026, when signing in from this version will stop working.",
+														"enforced_at": "2026-10-12"
+													}
+												]
+											},
+											"properties": {
+												"token": {
+													"type": "string",
+													"example": "1a2b3c..."
+												},
+												"warnings": {
+													"type": "array",
+													"example": [
+														{
+															"code": "two_factor_client_upgrade_required",
+															"message": "This app cannot ask for your two-factor authentication code. Update it before Oct 12, 2026, when signing in from this version will stop working.",
+															"enforced_at": "2026-10-12"
+														}
+													],
+													"items": {
+														"type": "object",
+														"properties": {
+															"code": {
+																"type": "string",
+																"example": "two_factor_client_upgrade_required"
+															},
+															"message": {
+																"type": "string",
+																"example": "This app cannot ask for your two-factor authentication code. Update it before Oct 12, 2026, when signing in from this version will stop working."
+															},
+															"enforced_at": {
+																"type": "string",
+																"example": "2026-10-12"
+															}
+														}
+													}
+												}
+											}
+										}
+									]
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Legacy client after the cutover",
 						"content": {
 							"application/json": {
 								"schema": {
 									"type": "object",
 									"example": {
-										"message": "The given data was invalid.",
+										"error": "two_factor_client_upgrade_required",
+										"message": "Two-factor authentication is enabled on this account and this app cannot ask for your code. Update the app to sign in."
+									},
+									"properties": {
+										"error": {
+											"type": "string",
+											"example": "two_factor_client_upgrade_required"
+										},
+										"message": {
+											"type": "string",
+											"example": "Two-factor authentication is enabled on this account and this app cannot ask for your code. Update the app to sign in."
+										}
+									}
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Two-factor challenge required",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"two_factor_required": true,
+										"challenge": "3f9c...64 chars",
+										"expires_in": 300,
+										"methods": [
+											"totp",
+											"recovery_code"
+										]
+									},
+									"properties": {
+										"two_factor_required": {
+											"type": "boolean",
+											"example": true
+										},
+										"challenge": {
+											"type": "string",
+											"example": "3f9c...64 chars"
+										},
+										"expires_in": {
+											"type": "integer",
+											"example": 300
+										},
+										"methods": {
+											"type": "array",
+											"example": [
+												"totp",
+												"recovery_code"
+											],
+											"items": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Wrong credentials",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "The provided credentials are incorrect.",
 										"errors": {
-											"email": ["The provided credentials are incorrect."]
+											"email": [
+												"The provided credentials are incorrect."
+											]
 										}
 									},
 									"properties": {
 										"message": {
 											"type": "string",
-											"example": "The given data was invalid."
+											"example": "The provided credentials are incorrect."
 										},
 										"errors": {
 											"type": "object",
 											"properties": {
 												"email": {
 													"type": "array",
-													"example": ["The provided credentials are incorrect."],
+													"example": [
+														"The provided credentials are incorrect."
+													],
 													"items": {
 														"type": "string"
 													}
@@ -53,7 +215,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"],
+				"tags": [
+					"Endpoints"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -75,9 +239,208 @@
 										"type": "string",
 										"description": "Device Name.",
 										"example": "Raycast"
+									},
+									"two_factor_supported": {
+										"type": "boolean",
+										"description": "Declares that the client can complete a two-factor challenge. Defaults to false.",
+										"example": true
 									}
 								},
-								"required": ["email", "password", "device_name"]
+								"required": [
+									"email",
+									"password",
+									"device_name"
+								]
+							}
+						}
+					}
+				},
+				"security": []
+			}
+		},
+		"/api/v1/sanctum/token/two-factor": {
+			"post": {
+				"summary": "Complete a two-factor challenge.",
+				"operationId": "completeATwoFactorChallenge",
+				"description": "Exchanges the `challenge` returned by a `409` from `POST /api/v1/sanctum/token`\nfor a permanent token. Send either a six-digit `code` from the authenticator\napp or one `recovery_code`. A challenge is single-use, expires after five\nminutes, and is burned after five wrong codes.\n\nThe `two_factor_too_many_attempts` 429 below burns the challenge, so the\nclient must sign in with the password again to get a new one. This is\ndistinct from the route's own rate limiter, whose 429 has a plain\n`{\"message\", \"status\": 429}` body (see `App\\Exceptions\\Handler::handleApiException`)\nand does not burn the challenge.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "Verified",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"token": "1a2b3c..."
+									},
+									"properties": {
+										"token": {
+											"type": "string",
+											"example": "1a2b3c..."
+										}
+									}
+								}
+							}
+						}
+					},
+					"410": {
+						"description": "Challenge unknown, expired or burned",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"error": "two_factor_challenge_expired",
+										"message": "This sign-in attempt has expired. Sign in with your password again."
+									},
+									"properties": {
+										"error": {
+											"type": "string",
+											"example": "two_factor_challenge_expired"
+										},
+										"message": {
+											"type": "string",
+											"example": "This sign-in attempt has expired. Sign in with your password again."
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Wrong code",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "The provided two factor authentication code was invalid.",
+										"errors": {
+											"code": [
+												"The provided two factor authentication code was invalid."
+											]
+										},
+										"attempts_remaining": 3
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "The provided two factor authentication code was invalid."
+										},
+										"errors": {
+											"type": "object",
+											"properties": {
+												"code": {
+													"type": "array",
+													"example": [
+														"The provided two factor authentication code was invalid."
+													],
+													"items": {
+														"type": "string"
+													}
+												}
+											}
+										},
+										"attempts_remaining": {
+											"type": "integer",
+											"example": 3
+										}
+									}
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"oneOf": [
+										{
+											"description": "Too many wrong codes for this account",
+											"type": "object",
+											"example": {
+												"error": "two_factor_too_many_attempts",
+												"message": "Too many incorrect codes. Try again later.",
+												"retry_after": 900
+											},
+											"properties": {
+												"error": {
+													"type": "string",
+													"example": "two_factor_too_many_attempts"
+												},
+												"message": {
+													"type": "string",
+													"example": "Too many incorrect codes. Try again later."
+												},
+												"retry_after": {
+													"type": "integer",
+													"example": 900
+												}
+											}
+										},
+										{
+											"description": "Another request for this challenge or account is in flight",
+											"type": "object",
+											"example": {
+												"error": "two_factor_busy",
+												"message": "Another sign-in attempt is in progress. Try again in a moment."
+											},
+											"properties": {
+												"error": {
+													"type": "string",
+													"example": "two_factor_busy"
+												},
+												"message": {
+													"type": "string",
+													"example": "Another sign-in attempt is in progress. Try again in a moment."
+												}
+											}
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"challenge": {
+										"type": "string",
+										"description": "The challenge from the 409 response.",
+										"example": "3f9c..."
+									},
+									"device_name": {
+										"type": "string",
+										"description": "Device Name. This is validated but not used to\n name the token: the device name recorded on the token is the one sent with the original\n `POST /api/v1/sanctum/token` request that issued this challenge.",
+										"example": "Raycast"
+									},
+									"code": {
+										"type": "string",
+										"description": "Six-digit authenticator code. Required unless recovery_code is present.",
+										"example": "123456",
+										"nullable": true
+									},
+									"recovery_code": {
+										"type": "string",
+										"description": "A recovery code. Required unless code is present.",
+										"example": "abcde12345-fghij67890",
+										"nullable": true
+									}
+								},
+								"required": [
+									"challenge",
+									"device_name"
+								]
 							}
 						}
 					}
@@ -112,7 +475,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"]
+				"tags": [
+					"Endpoints"
+				]
 			}
 		},
 		"/api/v1/email/create": {
@@ -142,7 +507,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"]
+				"tags": [
+					"Endpoints"
+				]
 			}
 		},
 		"/api/v1/domain-options": {
@@ -172,7 +539,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"]
+				"tags": [
+					"Endpoints"
+				]
 			}
 		},
 		"/api/v1/aliases": {
@@ -239,7 +608,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"],
+				"tags": [
+					"Endpoints"
+				],
 				"requestBody": {
 					"required": false,
 					"content": {
@@ -348,7 +719,9 @@
 									"example": {
 										"message": "The note field is required.",
 										"errors": {
-											"note": ["The note field is required."]
+											"note": [
+												"The note field is required."
+											]
 										}
 									},
 									"properties": {
@@ -361,7 +734,9 @@
 											"properties": {
 												"note": {
 													"type": "array",
-													"example": ["The note field is required."],
+													"example": [
+														"The note field is required."
+													],
 													"items": {
 														"type": "string"
 													}
@@ -374,7 +749,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"],
+				"tags": [
+					"Endpoints"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -384,16 +761,19 @@
 								"properties": {
 									"note": {
 										"type": "string",
-										"description": "The new note for the alias. Max 255 characters.",
-										"example": "\"My shopping account\""
+										"description": "The new note for the alias. Max 255 characters. Must not be greater than 255 characters.",
+										"example": "My shopping account"
 									},
 									"email": {
 										"type": "string",
-										"description": "The email alias to update.",
+										"description": "The email alias to update. Must be a valid email address.",
 										"example": "alias@hidemail.app"
 									}
 								},
-								"required": ["note", "email"]
+								"required": [
+									"note",
+									"email"
+								]
 							}
 						}
 					}
@@ -403,7 +783,115 @@
 				"summary": "Get all aliases.",
 				"operationId": "getAllAliases",
 				"description": "This endpoint lets you get all your aliases.",
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"description": "Pagination options.",
+						"example": null,
+						"required": false,
+						"schema": {
+							"type": "object",
+							"description": "Pagination options.",
+							"example": null,
+							"properties": {},
+							"nullable": true
+						}
+					},
+					{
+						"in": "query",
+						"name": "page.number",
+						"description": "The page to return. Must be at least 1.",
+						"example": 1,
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "The page to return. Must be at least 1.",
+							"example": 1,
+							"nullable": true
+						}
+					},
+					{
+						"in": "query",
+						"name": "page.size",
+						"description": "Aliases per page, up to 100. Must not be greater than 100. Must be at least 1.",
+						"example": 100,
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Aliases per page, up to 100. Must not be greater than 100. Must be at least 1.",
+							"example": 100,
+							"nullable": true
+						}
+					},
+					{
+						"in": "query",
+						"name": "filter",
+						"description": "Filters to apply.",
+						"example": null,
+						"required": false,
+						"schema": {
+							"type": "object",
+							"description": "Filters to apply.",
+							"example": null,
+							"properties": {},
+							"nullable": true
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"description": "Search aliases by email or note, 3 to 50 characters. Must not be greater than 50 characters. Must be at least 3 characters.",
+						"example": "shop",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "Search aliases by email or note, 3 to 50 characters. Must not be greater than 50 characters. Must be at least 3 characters.",
+							"example": "shop",
+							"nullable": true
+						}
+					},
+					{
+						"in": "query",
+						"name": "filter.is_active",
+						"description": "Return only active (1) or inactive (0) aliases. Must not be greater than 1. Must be at least 0.",
+						"example": 1,
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"description": "Return only active (1) or inactive (0) aliases. Must not be greater than 1. Must be at least 0.",
+							"example": 1,
+							"nullable": true
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
+						"description": "Sort field. Prefix with - for descending order. Must not be greater than 50 characters. Must be at least 3 characters.",
+						"example": "-created_at",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"description": "Sort field. Prefix with - for descending order. Must not be greater than 50 characters. Must be at least 3 characters.",
+							"example": "-created_at",
+							"enum": [
+								"email",
+								"is_active",
+								"created_at",
+								"updated_at",
+								"total_blocked",
+								"total_forwarded",
+								"-total_blocked",
+								"-total_forwarded",
+								"-email",
+								"-is_active",
+								"-created_at",
+								"-updated_at"
+							],
+							"nullable": true
+						}
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "",
@@ -414,22 +902,22 @@
 									"example": {
 										"data": [
 											{
-												"email": "test@relay.hidemail.app",
+												"email": "gbailey@relay.hidemail.app",
 												"is_active": true,
 												"note": null,
 												"total_forwarded": 0,
 												"total_blocked": 0,
-												"created_at": "2023-03-01 21:04:51",
-												"updated_at": "2023-03-01 21:12:11"
+												"created_at": "2026-10-08 20:26:19",
+												"updated_at": "2026-10-08 20:26:19"
 											},
 											{
-												"email": "test@relay.hidemail.app",
+												"email": "cecil42@relay.hidemail.app",
 												"is_active": true,
 												"note": null,
 												"total_forwarded": 0,
 												"total_blocked": 0,
-												"created_at": "2023-03-01 21:04:51",
-												"updated_at": "2023-03-01 21:12:11"
+												"created_at": "2026-10-08 20:26:19",
+												"updated_at": "2026-10-08 20:26:19"
 											}
 										]
 									},
@@ -438,22 +926,22 @@
 											"type": "array",
 											"example": [
 												{
-													"email": "test@relay.hidemail.app",
+													"email": "gbailey@relay.hidemail.app",
 													"is_active": true,
 													"note": null,
 													"total_forwarded": 0,
 													"total_blocked": 0,
-													"created_at": "2023-03-01 21:04:51",
-													"updated_at": "2023-03-01 21:12:11"
+													"created_at": "2026-10-08 20:26:19",
+													"updated_at": "2026-10-08 20:26:19"
 												},
 												{
-													"email": "test@relay.hidemail.app",
+													"email": "cecil42@relay.hidemail.app",
 													"is_active": true,
 													"note": null,
 													"total_forwarded": 0,
 													"total_blocked": 0,
-													"created_at": "2023-03-01 21:04:51",
-													"updated_at": "2023-03-01 21:12:11"
+													"created_at": "2026-10-08 20:26:19",
+													"updated_at": "2026-10-08 20:26:19"
 												}
 											],
 											"items": {
@@ -461,7 +949,7 @@
 												"properties": {
 													"email": {
 														"type": "string",
-														"example": "test@relay.hidemail.app"
+														"example": "gbailey@relay.hidemail.app"
 													},
 													"is_active": {
 														"type": "boolean",
@@ -469,7 +957,8 @@
 													},
 													"note": {
 														"type": "string",
-														"example": null
+														"example": null,
+														"nullable": true
 													},
 													"total_forwarded": {
 														"type": "integer",
@@ -481,11 +970,11 @@
 													},
 													"created_at": {
 														"type": "string",
-														"example": "2023-03-01 21:04:51"
+														"example": "2026-10-08 20:26:19"
 													},
 													"updated_at": {
 														"type": "string",
-														"example": "2023-03-01 21:12:11"
+														"example": "2026-10-08 20:26:19"
 													}
 												}
 											}
@@ -496,82 +985,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"],
-				"requestBody": {
-					"required": false,
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"page": {
-										"type": "object",
-										"description": "",
-										"example": null,
-										"properties": {
-											"number": {
-												"type": "integer",
-												"description": "Must be at least 1.",
-												"example": 38
-											},
-											"size": {
-												"type": "integer",
-												"description": "Must not be greater than 100. Must be at least 1.",
-												"example": 86
-											}
-										}
-									},
-									"filter": {
-										"type": "object",
-										"description": "",
-										"example": null,
-										"properties": {
-											"is_active": {
-												"type": "integer",
-												"description": "Must not be greater than 1. Must be at least 0.",
-												"example": 90
-											}
-										}
-									},
-									"search": {
-										"type": "string",
-										"description": "Must not be greater than 25 characters. Must be at least 3 characters.",
-										"example": "jmyuxpcpjtgwmqrequxgpvromuixcdqdmztilwaydcofwpnqilfoxolqrficpyyubxypqxfbritvkvcosucqbahey"
-									},
-									"sort": {
-										"type": "string",
-										"description": "Must not be greater than 50 characters. Must be at least 3 characters.",
-										"example": "vziwsmzsjwdpeasjozxsgcbmhpczdatxkjvduvfpijnuyinxdbucjwqgxlpzki",
-										"enum": [
-											"email",
-											"is_active",
-											"created_at",
-											"updated_at",
-											"total_blocked",
-											"total_forwarded",
-											"-total_blocked",
-											"-total_forwarded",
-											"-email",
-											"-is_active",
-											"-created_at",
-											"-updated_at"
-										]
-									},
-									"page[size]": {
-										"type": "integer",
-										"description": "",
-										"example": 100
-									},
-									"page[number]": {
-										"type": "integer",
-										"description": "",
-										"example": 1
-									}
-								}
-							}
-						}
-					}
-				}
+				"tags": [
+					"Endpoints"
+				]
 			}
 		},
 		"/api/v1/active-aliases": {
@@ -589,13 +1005,13 @@
 									"type": "object",
 									"example": {
 										"data": {
-											"email": "test@relay.hidemail.app",
+											"email": "rempel.chadrick@relay.hidemail.app",
 											"is_active": true,
 											"note": null,
 											"total_forwarded": 0,
 											"total_blocked": 0,
-											"created_at": "2023-03-01 21:04:51",
-											"updated_at": "2023-03-01 21:12:11"
+											"created_at": "2026-10-08 20:26:19",
+											"updated_at": "2026-10-08 20:26:19"
 										}
 									},
 									"properties": {
@@ -604,7 +1020,7 @@
 											"properties": {
 												"email": {
 													"type": "string",
-													"example": "test@relay.hidemail.app"
+													"example": "rempel.chadrick@relay.hidemail.app"
 												},
 												"is_active": {
 													"type": "boolean",
@@ -612,7 +1028,8 @@
 												},
 												"note": {
 													"type": "string",
-													"example": null
+													"example": null,
+													"nullable": true
 												},
 												"total_forwarded": {
 													"type": "integer",
@@ -624,11 +1041,11 @@
 												},
 												"created_at": {
 													"type": "string",
-													"example": "2023-03-01 21:04:51"
+													"example": "2026-10-08 20:26:19"
 												},
 												"updated_at": {
 													"type": "string",
-													"example": "2023-03-01 21:12:11"
+													"example": "2026-10-08 20:26:19"
 												}
 											}
 										}
@@ -638,7 +1055,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"],
+				"tags": [
+					"Endpoints"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -649,10 +1068,12 @@
 									"email": {
 										"type": "string",
 										"description": "The email you want to activate",
-										"example": "dborer@example.net"
+										"example": "gbailey@example.net"
 									}
 								},
-								"required": ["email"]
+								"required": [
+									"email"
+								]
 							}
 						}
 					}
@@ -674,13 +1095,13 @@
 									"type": "object",
 									"example": {
 										"data": {
-											"email": "test@relay.hidemail.app",
+											"email": "jdach@relay.hidemail.app",
 											"is_active": true,
 											"note": null,
 											"total_forwarded": 0,
 											"total_blocked": 0,
-											"created_at": "2023-03-01 21:04:51",
-											"updated_at": "2023-03-01 21:12:11"
+											"created_at": "2026-10-08 20:26:19",
+											"updated_at": "2026-10-08 20:26:19"
 										}
 									},
 									"properties": {
@@ -689,7 +1110,7 @@
 											"properties": {
 												"email": {
 													"type": "string",
-													"example": "test@relay.hidemail.app"
+													"example": "jdach@relay.hidemail.app"
 												},
 												"is_active": {
 													"type": "boolean",
@@ -697,7 +1118,8 @@
 												},
 												"note": {
 													"type": "string",
-													"example": null
+													"example": null,
+													"nullable": true
 												},
 												"total_forwarded": {
 													"type": "integer",
@@ -709,11 +1131,11 @@
 												},
 												"created_at": {
 													"type": "string",
-													"example": "2023-03-01 21:04:51"
+													"example": "2026-10-08 20:26:19"
 												},
 												"updated_at": {
 													"type": "string",
-													"example": "2023-03-01 21:12:11"
+													"example": "2026-10-08 20:26:19"
 												}
 											}
 										}
@@ -723,7 +1145,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"],
+				"tags": [
+					"Endpoints"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -734,10 +1158,12 @@
 									"email": {
 										"type": "string",
 										"description": "The email you want to deactivate",
-										"example": "gerard.robel@example.com"
+										"example": "gbailey@example.net"
 									}
 								},
-								"required": ["email"]
+								"required": [
+									"email"
+								]
 							}
 						}
 					}
@@ -748,7 +1174,7 @@
 			"post": {
 				"summary": "Set a webhook URL.",
 				"operationId": "setAWebhookURL",
-				"description": "This endpoint lets you create a webhook URL. After you get email on any of your aliases we will send all data to this URL. You can do automation with this data and create your own integrations.",
+				"description": "This endpoint lets you create a webhook URL. After you get email on any of your aliases we will send all data to this URL. You can do automation with this data and create your own integrations. The URL must use https, and the account owner is emailed whenever the webhook changes.",
 				"parameters": [],
 				"responses": {
 					"401": {
@@ -771,7 +1197,9 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"],
+				"tags": [
+					"Endpoints"
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -781,11 +1209,13 @@
 								"properties": {
 									"hookUrl": {
 										"type": "string",
-										"description": "Must not be greater than 255 characters.",
-										"example": "http://schuppe.com/labore-ut-asperiores-maxime-dicta"
+										"description": "An https URL that receives a copy of every incoming email.",
+										"example": "https://hooks.slack.com/services/T0000/B0000/XXXXXXXX"
 									}
 								},
-								"required": ["hookUrl"]
+								"required": [
+									"hookUrl"
+								]
 							}
 						}
 					}
@@ -796,7 +1226,7 @@
 			"delete": {
 				"summary": "Remove a webhook URL.",
 				"operationId": "removeAWebhookURL",
-				"description": "This endpoint lets you remove a webhook URL.",
+				"description": "This endpoint lets you remove a webhook URL. The account owner is emailed when a webhook is removed.",
 				"parameters": [],
 				"responses": {
 					"401": {
@@ -819,14 +1249,16 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"]
+				"tags": [
+					"Endpoints"
+				]
 			}
 		},
 		"/api/v1/delete-token": {
 			"delete": {
 				"summary": "Delete api token",
 				"operationId": "deleteApiToken",
-				"description": "This endpoint lets you remove a webhook URL.",
+				"description": "This endpoint lets you remove an api token.",
 				"parameters": [],
 				"responses": {
 					"401": {
@@ -849,28 +1281,10 @@
 						}
 					}
 				},
-				"tags": ["Endpoints"]
+				"tags": [
+					"Endpoints"
+				]
 			}
 		}
-	},
-	"tags": [
-		{
-			"name": "Endpoints",
-			"description": ""
-		}
-	],
-	"components": {
-		"securitySchemes": {
-			"default": {
-				"type": "http",
-				"scheme": "bearer",
-				"description": "You can retrieve your token by visiting your dashboard, find in menu <b>API tokens</b> and create a new one."
-			}
-		}
-	},
-	"security": [
-		{
-			"default": []
-		}
-	]
+	}
 }
