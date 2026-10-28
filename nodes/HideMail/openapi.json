@@ -482,9 +482,9 @@
 		},
 		"/api/v1/email/create": {
 			"post": {
-				"summary": "",
+				"summary": "Post Api V1 Email Create",
 				"operationId": "postApiV1EmailCreate",
-				"description": "",
+				"description": "Creates a new alias. Pass `domain` to create it on one of your alias domains (see /api/v1/alias-domains); when it is empty, your default alias domain is used. Any other domain is refused with 422.",
 				"parameters": [],
 				"responses": {
 					"401": {
@@ -509,7 +509,29 @@
 				},
 				"tags": [
 					"Endpoints"
-				]
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"description": {
+										"type": "string",
+										"description": "Note for the alias, at most 200 characters.",
+										"example": "My shopping account"
+									},
+									"domain": {
+										"type": "string",
+										"description": "One of your alias domains. Empty: your default alias domain.",
+										"example": "hidemail.app"
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/v1/domain-options": {
@@ -548,7 +570,7 @@
 			"post": {
 				"summary": "Create a new email alias.",
 				"operationId": "createANewEmailAlias",
-				"description": "This endpoint lets you create a new alias.",
+				"description": "This endpoint lets you create a new alias. Pass `domain` to create it on one of your alias domains (see /api/v1/alias-domains); when it is empty, your default alias domain is used. Any other domain is refused with 422.",
 				"parameters": [],
 				"responses": {
 					"200": {
@@ -620,8 +642,13 @@
 								"properties": {
 									"description": {
 										"type": "string",
-										"description": "Note.",
-										"example": "My new alias"
+										"description": "Note for the alias, at most 200 characters.",
+										"example": "My shopping account"
+									},
+									"domain": {
+										"type": "string",
+										"description": "One of your alias domains. Empty: your default alias domain.",
+										"example": "hidemail.app"
 									}
 								}
 							}
@@ -907,8 +934,8 @@
 												"note": null,
 												"total_forwarded": 0,
 												"total_blocked": 0,
-												"created_at": "2026-10-08 20:26:19",
-												"updated_at": "2026-10-08 20:26:19"
+												"created_at": "2026-10-28 20:44:17",
+												"updated_at": "2026-10-28 20:44:17"
 											},
 											{
 												"email": "cecil42@relay.hidemail.app",
@@ -916,8 +943,8 @@
 												"note": null,
 												"total_forwarded": 0,
 												"total_blocked": 0,
-												"created_at": "2026-10-08 20:26:19",
-												"updated_at": "2026-10-08 20:26:19"
+												"created_at": "2026-10-28 20:44:17",
+												"updated_at": "2026-10-28 20:44:17"
 											}
 										]
 									},
@@ -931,8 +958,8 @@
 													"note": null,
 													"total_forwarded": 0,
 													"total_blocked": 0,
-													"created_at": "2026-10-08 20:26:19",
-													"updated_at": "2026-10-08 20:26:19"
+													"created_at": "2026-10-28 20:44:17",
+													"updated_at": "2026-10-28 20:44:17"
 												},
 												{
 													"email": "cecil42@relay.hidemail.app",
@@ -940,8 +967,8 @@
 													"note": null,
 													"total_forwarded": 0,
 													"total_blocked": 0,
-													"created_at": "2026-10-08 20:26:19",
-													"updated_at": "2026-10-08 20:26:19"
+													"created_at": "2026-10-28 20:44:17",
+													"updated_at": "2026-10-28 20:44:17"
 												}
 											],
 											"items": {
@@ -970,11 +997,11 @@
 													},
 													"created_at": {
 														"type": "string",
-														"example": "2026-10-08 20:26:19"
+														"example": "2026-10-28 20:44:17"
 													},
 													"updated_at": {
 														"type": "string",
-														"example": "2026-10-08 20:26:19"
+														"example": "2026-10-28 20:44:17"
 													}
 												}
 											}
@@ -1010,8 +1037,8 @@
 											"note": null,
 											"total_forwarded": 0,
 											"total_blocked": 0,
-											"created_at": "2026-10-08 20:26:19",
-											"updated_at": "2026-10-08 20:26:19"
+											"created_at": "2026-10-28 20:44:17",
+											"updated_at": "2026-10-28 20:44:17"
 										}
 									},
 									"properties": {
@@ -1041,11 +1068,11 @@
 												},
 												"created_at": {
 													"type": "string",
-													"example": "2026-10-08 20:26:19"
+													"example": "2026-10-28 20:44:17"
 												},
 												"updated_at": {
 													"type": "string",
-													"example": "2026-10-08 20:26:19"
+													"example": "2026-10-28 20:44:17"
 												}
 											}
 										}
@@ -1100,8 +1127,8 @@
 											"note": null,
 											"total_forwarded": 0,
 											"total_blocked": 0,
-											"created_at": "2026-10-08 20:26:19",
-											"updated_at": "2026-10-08 20:26:19"
+											"created_at": "2026-10-28 20:44:17",
+											"updated_at": "2026-10-28 20:44:17"
 										}
 									},
 									"properties": {
@@ -1131,11 +1158,11 @@
 												},
 												"created_at": {
 													"type": "string",
-													"example": "2026-10-08 20:26:19"
+													"example": "2026-10-28 20:44:17"
 												},
 												"updated_at": {
 													"type": "string",
-													"example": "2026-10-08 20:26:19"
+													"example": "2026-10-28 20:44:17"
 												}
 											}
 										}
@@ -1253,6 +1280,445 @@
 					"Endpoints"
 				]
 			}
+		},
+		"/api/v1/alias-domains": {
+			"get": {
+				"summary": "List alias domains.",
+				"operationId": "listAliasDomains",
+				"description": "The domains new aliases can be created on: the built-in HideMail domain and your custom domains that can receive mail. The one marked is_default is used for new aliases.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": [
+											{
+												"domain": "relay.hidemail.app",
+												"is_custom": false,
+												"is_default": false
+											},
+											{
+												"domain": "example.com",
+												"is_custom": true,
+												"is_default": true
+											}
+										]
+									},
+									"properties": {
+										"data": {
+											"type": "array",
+											"example": [
+												{
+													"domain": "relay.hidemail.app",
+													"is_custom": false,
+													"is_default": false
+												},
+												{
+													"domain": "example.com",
+													"is_custom": true,
+													"is_default": true
+												}
+											],
+											"items": {
+												"type": "object",
+												"properties": {
+													"domain": {
+														"type": "string",
+														"example": "relay.hidemail.app"
+													},
+													"is_custom": {
+														"type": "boolean",
+														"example": false
+													},
+													"is_default": {
+														"type": "boolean",
+														"example": false
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				]
+			}
+		},
+		"/api/v1/default-alias-domain": {
+			"put": {
+				"summary": "Set the default alias domain.",
+				"operationId": "setTheDefaultAliasDomain",
+				"description": "New aliases are created on this domain. Use one of your custom domains that can receive mail, or the built-in HideMail domain to switch back.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": {
+											"domain": "example.com"
+										}
+									},
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"domain": {
+													"type": "string",
+													"example": "example.com"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "You have no custom domain with that name."
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "You have no custom domain with that name."
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "This domain cannot receive mail yet. Verify its MX record first."
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "This domain cannot receive mail yet. Verify its MX record first."
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"domain": {
+										"type": "string",
+										"description": "A domain from the alias domains list.",
+										"example": "example.com"
+									}
+								},
+								"required": [
+									"domain"
+								]
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "Reset the default alias domain.",
+				"operationId": "resetTheDefaultAliasDomain",
+				"description": "New aliases go back to the built-in HideMail domain.",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"data": {
+											"domain": "relay.hidemail.app"
+										}
+									},
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"domain": {
+													"type": "string",
+													"example": "relay.hidemail.app"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				]
+			}
+		},
+		"/api/v1/custom-domains": {
+			"get": {
+				"summary": "List custom domains.",
+				"operationId": "listCustomDomains",
+				"description": "Your own domains added to HideMail, with their setup status (provisioning, provisioning_failed, needs_mx, ready) and whether catch-all is on.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				]
+			},
+			"post": {
+				"summary": "Add a custom domain.",
+				"operationId": "addACustomDomain",
+				"description": "Publish the ownership TXT record from the setup endpoint first. Setup in the mail server then runs for a few seconds; publish the MX record and verify the domain.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"domain": {
+										"type": "string",
+										"description": "The domain.",
+										"example": "example.com"
+									}
+								},
+								"required": [
+									"domain"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/custom-domains/{domain}": {
+			"get": {
+				"summary": "Show a custom domain's setup.",
+				"operationId": "showACustomDomainsSetup",
+				"description": "The DNS records the domain needs (ownership TXT and MX), whether each is published, the MX hosts it uses now and its setup status. Works for a domain you have not added yet.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				]
+			},
+			"parameters": [
+				{
+					"in": "path",
+					"name": "domain",
+					"description": "The domain.",
+					"example": "example.com",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}
+			]
+		},
+		"/api/v1/custom-domains/{domain}/verification": {
+			"post": {
+				"summary": "Verify a custom domain.",
+				"operationId": "verifyACustomDomain",
+				"description": "Checks that the domain's MX record points at HideMail and starts receiving its mail.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				]
+			},
+			"parameters": [
+				{
+					"in": "path",
+					"name": "domain",
+					"description": "The domain.",
+					"example": "example.com",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}
+			]
+		},
+		"/api/v1/custom-domains/{domain}/catch-all": {
+			"put": {
+				"summary": "Turn catch-all on or off.",
+				"operationId": "turnCatchAllOnOrOff",
+				"description": "With catch-all on, mail to any address on the domain that has no alias yet creates that alias (paid plan only). With it off, such mail is dropped.",
+				"parameters": [],
+				"responses": {
+					"401": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "Not authenticated"
+									},
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Not authenticated"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Endpoints"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"enabled": {
+										"type": "boolean",
+										"description": "Turn catch-all on (true) or off (false).",
+										"example": true
+									}
+								},
+								"required": [
+									"enabled"
+								]
+							}
+						}
+					}
+				}
+			},
+			"parameters": [
+				{
+					"in": "path",
+					"name": "domain",
+					"description": "The domain.",
+					"example": "example.com",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}
+			]
 		},
 		"/api/v1/delete-token": {
 			"delete": {
