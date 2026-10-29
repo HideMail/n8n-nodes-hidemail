@@ -450,11 +450,30 @@
 		},
 		"/api/user": {
 			"get": {
-				"summary": "",
+				"summary": "Get Api User",
 				"operationId": "getApiUser",
-				"description": "",
+				"description": "Returns the email address of the token owner. Use it to check that a token works.",
 				"parameters": [],
 				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"email": "you@example.com"
+									},
+									"properties": {
+										"email": {
+											"type": "string",
+											"example": "you@example.com"
+										}
+									}
+								}
+							}
+						}
+					},
 					"401": {
 						"description": "",
 						"content": {
@@ -487,19 +506,111 @@
 				"description": "Creates a new alias. Pass `domain` to create it on one of your alias domains (see /api/v1/alias-domains); when it is empty, your default alias domain is used. Any other domain is refused with 422.",
 				"parameters": [],
 				"responses": {
-					"401": {
+					"200": {
 						"description": "",
 						"content": {
 							"application/json": {
 								"schema": {
 									"type": "object",
 									"example": {
-										"message": "Not authenticated"
+										"status": "success",
+										"email": "k3j9x@hidemail.app"
 									},
 									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
+										"email": {
+											"type": "string",
+											"example": "k3j9x@hidemail.app"
+										}
+									}
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"status": "success",
+										"message": "You have reached the limit of emails.",
+										"messageLink": "https://hidemail.app/plans",
+										"messageLinkTitle": "Please subscribe on web-site to continue.",
+										"showSubscribeButton": true
+									},
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
 										"message": {
 											"type": "string",
-											"example": "Not authenticated"
+											"example": "You have reached the limit of emails."
+										},
+										"messageLink": {
+											"type": "string",
+											"example": "https://hidemail.app/plans"
+										},
+										"messageLinkTitle": {
+											"type": "string",
+											"example": "Please subscribe on web-site to continue."
+										},
+										"showSubscribeButton": {
+											"type": "boolean",
+											"example": true
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"status": "error",
+										"message": "This domain is not one of your alias domains. Use one of: hidemail.app"
+									},
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "error"
+										},
+										"message": {
+											"type": "string",
+											"example": "This domain is not one of your alias domains. Use one of: hidemail.app"
+										}
+									}
+								}
+							}
+						}
+					},
+					"429": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"status": "error",
+										"message": "Too many requests"
+									},
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "error"
+										},
+										"message": {
+											"type": "string",
+											"example": "Too many requests"
 										}
 									}
 								}
@@ -929,22 +1040,22 @@
 									"example": {
 										"data": [
 											{
-												"email": "gbailey@relay.hidemail.app",
+												"email": "gbailey@hidemail.app",
 												"is_active": true,
 												"note": null,
 												"total_forwarded": 0,
 												"total_blocked": 0,
-												"created_at": "2026-10-28 20:44:17",
-												"updated_at": "2026-10-28 20:44:17"
+												"created_at": "2026-10-29 14:43:05",
+												"updated_at": "2026-10-29 14:43:05"
 											},
 											{
-												"email": "cecil42@relay.hidemail.app",
+												"email": "cecil42@hidemail.app",
 												"is_active": true,
 												"note": null,
 												"total_forwarded": 0,
 												"total_blocked": 0,
-												"created_at": "2026-10-28 20:44:17",
-												"updated_at": "2026-10-28 20:44:17"
+												"created_at": "2026-10-29 14:43:05",
+												"updated_at": "2026-10-29 14:43:05"
 											}
 										]
 									},
@@ -953,22 +1064,22 @@
 											"type": "array",
 											"example": [
 												{
-													"email": "gbailey@relay.hidemail.app",
+													"email": "gbailey@hidemail.app",
 													"is_active": true,
 													"note": null,
 													"total_forwarded": 0,
 													"total_blocked": 0,
-													"created_at": "2026-10-28 20:44:17",
-													"updated_at": "2026-10-28 20:44:17"
+													"created_at": "2026-10-29 14:43:05",
+													"updated_at": "2026-10-29 14:43:05"
 												},
 												{
-													"email": "cecil42@relay.hidemail.app",
+													"email": "cecil42@hidemail.app",
 													"is_active": true,
 													"note": null,
 													"total_forwarded": 0,
 													"total_blocked": 0,
-													"created_at": "2026-10-28 20:44:17",
-													"updated_at": "2026-10-28 20:44:17"
+													"created_at": "2026-10-29 14:43:05",
+													"updated_at": "2026-10-29 14:43:05"
 												}
 											],
 											"items": {
@@ -976,7 +1087,7 @@
 												"properties": {
 													"email": {
 														"type": "string",
-														"example": "gbailey@relay.hidemail.app"
+														"example": "gbailey@hidemail.app"
 													},
 													"is_active": {
 														"type": "boolean",
@@ -997,11 +1108,11 @@
 													},
 													"created_at": {
 														"type": "string",
-														"example": "2026-10-28 20:44:17"
+														"example": "2026-10-29 14:43:05"
 													},
 													"updated_at": {
 														"type": "string",
-														"example": "2026-10-28 20:44:17"
+														"example": "2026-10-29 14:43:05"
 													}
 												}
 											}
@@ -1032,13 +1143,13 @@
 									"type": "object",
 									"example": {
 										"data": {
-											"email": "rempel.chadrick@relay.hidemail.app",
+											"email": "rempel.chadrick@hidemail.app",
 											"is_active": true,
 											"note": null,
 											"total_forwarded": 0,
 											"total_blocked": 0,
-											"created_at": "2026-10-28 20:44:17",
-											"updated_at": "2026-10-28 20:44:17"
+											"created_at": "2026-10-29 14:43:05",
+											"updated_at": "2026-10-29 14:43:05"
 										}
 									},
 									"properties": {
@@ -1047,7 +1158,7 @@
 											"properties": {
 												"email": {
 													"type": "string",
-													"example": "rempel.chadrick@relay.hidemail.app"
+													"example": "rempel.chadrick@hidemail.app"
 												},
 												"is_active": {
 													"type": "boolean",
@@ -1068,11 +1179,11 @@
 												},
 												"created_at": {
 													"type": "string",
-													"example": "2026-10-28 20:44:17"
+													"example": "2026-10-29 14:43:05"
 												},
 												"updated_at": {
 													"type": "string",
-													"example": "2026-10-28 20:44:17"
+													"example": "2026-10-29 14:43:05"
 												}
 											}
 										}
@@ -1122,13 +1233,13 @@
 									"type": "object",
 									"example": {
 										"data": {
-											"email": "jdach@relay.hidemail.app",
+											"email": "jdach@hidemail.app",
 											"is_active": true,
 											"note": null,
 											"total_forwarded": 0,
 											"total_blocked": 0,
-											"created_at": "2026-10-28 20:44:17",
-											"updated_at": "2026-10-28 20:44:17"
+											"created_at": "2026-10-29 14:43:05",
+											"updated_at": "2026-10-29 14:43:05"
 										}
 									},
 									"properties": {
@@ -1137,7 +1248,7 @@
 											"properties": {
 												"email": {
 													"type": "string",
-													"example": "jdach@relay.hidemail.app"
+													"example": "jdach@hidemail.app"
 												},
 												"is_active": {
 													"type": "boolean",
@@ -1158,11 +1269,11 @@
 												},
 												"created_at": {
 													"type": "string",
-													"example": "2026-10-28 20:44:17"
+													"example": "2026-10-29 14:43:05"
 												},
 												"updated_at": {
 													"type": "string",
-													"example": "2026-10-28 20:44:17"
+													"example": "2026-10-29 14:43:05"
 												}
 											}
 										}
@@ -1493,19 +1604,54 @@
 				"description": "Your own domains added to HideMail, with their setup status (provisioning, provisioning_failed, needs_mx, ready) and whether catch-all is on.",
 				"parameters": [],
 				"responses": {
-					"401": {
+					"200": {
 						"description": "",
 						"content": {
 							"application/json": {
 								"schema": {
 									"type": "object",
 									"example": {
-										"message": "Not authenticated"
+										"data": [
+											{
+												"domain": "example.com",
+												"status": "ready",
+												"active": true,
+												"catch_all": false
+											}
+										]
 									},
 									"properties": {
-										"message": {
-											"type": "string",
-											"example": "Not authenticated"
+										"data": {
+											"type": "array",
+											"example": [
+												{
+													"domain": "example.com",
+													"status": "ready",
+													"active": true,
+													"catch_all": false
+												}
+											],
+											"items": {
+												"type": "object",
+												"properties": {
+													"domain": {
+														"type": "string",
+														"example": "example.com"
+													},
+													"status": {
+														"type": "string",
+														"example": "ready"
+													},
+													"active": {
+														"type": "boolean",
+														"example": true
+													},
+													"catch_all": {
+														"type": "boolean",
+														"example": false
+													}
+												}
+											}
 										}
 									}
 								}
@@ -1575,19 +1721,134 @@
 				"description": "The DNS records the domain needs (ownership TXT and MX), whether each is published, the MX hosts it uses now and its setup status. Works for a domain you have not added yet.",
 				"parameters": [],
 				"responses": {
-					"401": {
+					"200": {
 						"description": "",
 						"content": {
 							"application/json": {
 								"schema": {
 									"type": "object",
 									"example": {
-										"message": "Not authenticated"
+										"data": {
+											"domain": "example.com",
+											"status": "needs_mx",
+											"catch_all": false,
+											"dns_records": [
+												{
+													"type": "TXT",
+													"name": "example.com",
+													"value": "hidemail-verify=3f9a1c",
+													"priority": null,
+													"purpose": "Proves you own the domain. Publish it before adding the domain.",
+													"found": true
+												},
+												{
+													"type": "MX",
+													"name": "example.com",
+													"value": "mx.postal.hidemail.app",
+													"priority": 10,
+													"purpose": "Delivers the domain's mail to HideMail. It must be the only MX record, or the one with the lowest priority.",
+													"found": false
+												}
+											],
+											"current_mx_hosts": [],
+											"replaces_other_mail_provider": false
+										}
+									},
+									"properties": {
+										"data": {
+											"type": "object",
+											"properties": {
+												"domain": {
+													"type": "string",
+													"example": "example.com"
+												},
+												"status": {
+													"type": "string",
+													"example": "needs_mx"
+												},
+												"catch_all": {
+													"type": "boolean",
+													"example": false
+												},
+												"dns_records": {
+													"type": "array",
+													"example": [
+														{
+															"type": "TXT",
+															"name": "example.com",
+															"value": "hidemail-verify=3f9a1c",
+															"priority": null,
+															"purpose": "Proves you own the domain. Publish it before adding the domain.",
+															"found": true
+														},
+														{
+															"type": "MX",
+															"name": "example.com",
+															"value": "mx.postal.hidemail.app",
+															"priority": 10,
+															"purpose": "Delivers the domain's mail to HideMail. It must be the only MX record, or the one with the lowest priority.",
+															"found": false
+														}
+													],
+													"items": {
+														"type": "object",
+														"properties": {
+															"type": {
+																"type": "string",
+																"example": "TXT"
+															},
+															"name": {
+																"type": "string",
+																"example": "example.com"
+															},
+															"value": {
+																"type": "string",
+																"example": "hidemail-verify=3f9a1c"
+															},
+															"priority": {
+																"type": "string",
+																"example": null,
+																"nullable": true
+															},
+															"purpose": {
+																"type": "string",
+																"example": "Proves you own the domain. Publish it before adding the domain."
+															},
+															"found": {
+																"type": "boolean",
+																"example": true
+															}
+														}
+													}
+												},
+												"current_mx_hosts": {
+													"type": "array",
+													"example": []
+												},
+												"replaces_other_mail_provider": {
+													"type": "boolean",
+													"example": false
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"message": "That is not a valid domain name."
 									},
 									"properties": {
 										"message": {
 											"type": "string",
-											"example": "Not authenticated"
+											"example": "That is not a valid domain name."
 										}
 									}
 								}
